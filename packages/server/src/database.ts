@@ -1,4 +1,5 @@
 import { ConnectionOptions, createConnection } from 'typeorm';
+import entities from './entities';
 import 'mysql';
 
 class Database {
@@ -10,6 +11,7 @@ class Database {
 
   private _setupConnectOptions() {
     this._connectOptions = {
+      entities,
       type: process.env.TYPEORM_TYPE as any,
       host: process.env.TYPEORM_HOST,
       database: process.env.TYPEORM_DATABASE,
