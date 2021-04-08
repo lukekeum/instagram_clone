@@ -2,7 +2,7 @@ import { atom, useRecoilState } from 'recoil';
 
 type TStringORNull = string | null;
 
-interface IAuthAtom {
+export interface IAuthAtom {
   authenticated: boolean;
   profile: {
     user_id: TStringORNull;
@@ -11,7 +11,7 @@ interface IAuthAtom {
   };
 }
 
-const authAtom = atom<IAuthAtom>({
+export const authAtom = atom<IAuthAtom>({
   key: 'auth',
   default: {
     authenticated: false,
@@ -23,7 +23,6 @@ const authAtom = atom<IAuthAtom>({
   },
 });
 
-export default function useAuthAtom() {
-  const [auth, setAuth] = useRecoilState(authAtom);
-  return [auth, setAuth] as const;
+export function useAuthState() {
+  return useRecoilState(authAtom);
 }

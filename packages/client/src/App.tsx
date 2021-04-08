@@ -1,11 +1,11 @@
 import React from 'react';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
-import useAuthAtom from './atom/auth';
+import { useAuthState } from './atom/auth';
 import Home from './pages/Home';
 import Login from './pages/Login';
 
 function App() {
-  const [{ authenticated: auth }] = useAuthAtom();
+  const [{ authenticated: auth }] = useAuthState();
   return (
     <BrowserRouter>
       <Switch>
@@ -19,20 +19,16 @@ function App() {
 interface IProtectedRouteProps {
   auth: boolean;
   component: React.FC;
-  path: string;
-  exact: boolean;
 }
 
 function ProtectedRoute({
   auth,
   component: Component,
-  path,
-  exact = false,
-}: IProtectedRouteProps) {
+  ...rest
+}: IProtectedRouteProps & Record<string, any>) {
   return (
     <Route
-      path={path}
-      exact={exact}
+      {...rest}
       render={() => (auth ? <Component /> : <Redirect to="/login" />)}
     />
   );
