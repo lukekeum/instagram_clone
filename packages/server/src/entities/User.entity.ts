@@ -1,8 +1,10 @@
+import JWT from '@src/lib/jwt';
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
+  getRepository,
   Index,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -35,6 +37,26 @@ class User extends BaseEntity {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  async generateToken() {
+    const secret = JWT.secret();
+
+    const accessToken = await JWT.sign(
+      {
+        id: this.id,
+        user_id: this.id,
+        user_email: this.email,
+        user_tag: this.profile.tag,
+      },
+      secret,
+      {
+        subject: 'access_token',
+        expiresIn: '7d',
+      }
+    );
+
+    return { accessToken };
+  }
 }
 
 export default User;
