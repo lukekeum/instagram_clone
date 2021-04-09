@@ -8,6 +8,7 @@
     "start:dev": "NODE_ENV=development ts-node-dev src/index.ts | pino-pretty"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^8.5.1",
     "@types/node": "^14.14.37",
     "eslint": "^7.23.0",
     "eslint-config-prettier": "^8.1.0",
@@ -22,6 +23,7 @@
   "dependencies": {
     "fastify": "^3.14.1",
     "fastify-compress": "^3.4.2",
+    "jsonwebtoken": "^8.5.1",
     "pg": "^8.5.1",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.2.32"
