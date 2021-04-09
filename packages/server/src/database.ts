@@ -1,6 +1,6 @@
 import { ConnectionOptions, createConnection } from 'typeorm';
 import entities from './entities';
-import 'mysql';
+import 'pg';
 
 class Database {
   private _connectOptions: ConnectionOptions;
