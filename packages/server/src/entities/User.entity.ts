@@ -11,6 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import UserProfile from './UserProfile.entity';
+import AuthToken from './AuthToken.entity';
 
 @Entity('users')
 class User extends BaseEntity {
@@ -39,23 +40,42 @@ class User extends BaseEntity {
   updated_at: Date;
 
   async generateToken() {
+    const authToken = new AuthToken();
+    authToken.fk_user_id = this.id;
+    await getRepository(AuthToken).save(authToken);
+
     const secret = JWT.secret();
+    const userProfile = await getRepository(UserProfile).findOne({
+      fk_user_id: this.id,
+    });
+
+    const refreshToken = await JWT.sign(
+      {
+        id: this.id,
+        token: authToken.id,
+      },
+      secret,
+      {
+        subject: 'refresh_token',
+        expiresIn: '1h',
+      }
+    );
 
     const accessToken = await JWT.sign(
       {
         id: this.id,
         user_id: this.id,
         user_email: this.email,
-        user_tag: this.profile.tag,
+        tag: userProfile!.tag,
       },
       secret,
       {
         subject: 'access_token',
-        expiresIn: '7d',
+        expiresIn: '1h',
       }
     );
 
-    return { accessToken };
+    return { accessToken, refreshToken } as const;
   }
 }
 
