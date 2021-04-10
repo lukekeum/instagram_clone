@@ -18,6 +18,7 @@ class Database {
       username: process.env.TYPEORM_USERNAME,
       password: process.env.TYPEORM_PASSWORD,
       port: Number(process.env.TYPEORM_PORT || '3306'),
+      dropSchema: process.env.TYPEORM_DROPSCHEMA === 'true',
       synchronize: process.env.TYPEORM_SYNCHRONIZE === 'true',
       logging: process.env.TYPEORM_LOGGING === 'true',
     };
