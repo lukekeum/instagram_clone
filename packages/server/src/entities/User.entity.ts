@@ -1,4 +1,4 @@
-import JWT from '@src/lib/jwt';
+import JWT from '../lib/jwt';
 import {
   BaseEntity,
   Column,
