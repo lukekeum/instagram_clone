@@ -3,13 +3,7 @@ import UserProfile from '../../../entities/UserProfile.entity';
 import { FastifyPluginCallback, RouteShorthandOptions } from 'fastify';
 import { getRepository } from 'typeorm';
 import bcrypt from 'bcrypt';
-
-interface IRegisterBody {
-  id: string;
-  password: string;
-  email: string;
-  tag: string;
-}
+import { IRegisterBody, registerSchema } from './auth.schema';
 
 const registerRoute: FastifyPluginCallback = async (fastify, opts) => {
   /**
@@ -78,50 +72,6 @@ const registerRoute: FastifyPluginCallback = async (fastify, opts) => {
       }
     }
   );
-};
-
-const registerSchema: RouteShorthandOptions = {
-  schema: {
-    body: {
-      type: 'object',
-      required: ['id', 'password', 'email', 'tag'],
-      properties: {
-        id: { type: 'string' },
-        user_id: { type: 'string' },
-        password: { type: 'string' },
-        email: { type: 'string' },
-        tag: { type: 'string' },
-      },
-    },
-    response: {
-      201: {
-        type: 'object',
-        properties: {
-          message: { type: 'string' },
-          data: {
-            id: { type: 'string' },
-            email: { type: 'string' },
-            profile: {
-              tag: { type: 'string' },
-              short_bio: { type: 'string' },
-            },
-          },
-        },
-      },
-      '4xx': {
-        type: 'object',
-        properties: {
-          message: { type: 'string' },
-        },
-      },
-      500: {
-        type: 'object',
-        properties: {
-          message: { type: 'string' },
-        },
-      },
-    },
-  },
 };
 
 export default registerRoute;

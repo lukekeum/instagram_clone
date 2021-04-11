@@ -3,11 +3,7 @@ import UserProfile from '../../../entities/UserProfile.entity';
 import { FastifyPluginCallback, RouteShorthandOptions } from 'fastify';
 import { getRepository } from 'typeorm';
 import bcrypt from 'bcrypt';
-
-interface ILoginBody {
-  id: string;
-  password: string;
-}
+import { ILoginBody, loginSchema } from './auth.schema';
 
 const loginRoute: FastifyPluginCallback = async (fastify, opts) => {
   /**
@@ -73,49 +69,6 @@ const loginRoute: FastifyPluginCallback = async (fastify, opts) => {
       return res.status(500).send({ message: 'Internal Server Error' });
     }
   });
-};
-
-const loginSchema: RouteShorthandOptions = {
-  schema: {
-    body: {
-      type: 'object',
-      required: ['id', 'password'],
-      properties: {
-        id: { type: 'string' },
-        password: { type: 'string' },
-      },
-    },
-    response: {
-      201: {
-        type: 'object',
-        properties: {
-          message: { type: 'string' },
-          data: {
-            id: { type: 'string' },
-            user_id: { type: 'string' },
-            email: { type: 'string' },
-            profile: {
-              tag: { type: 'string' },
-              short_bio: { type: 'string' },
-            },
-          },
-          token: { type: 'string' },
-        },
-      },
-      '4xx': {
-        type: 'object',
-        properties: {
-          message: { type: 'string' },
-        },
-      },
-      500: {
-        type: 'object',
-        properties: {
-          message: { type: 'string' },
-        },
-      },
-    },
-  },
 };
 
 export default loginRoute;
