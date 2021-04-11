@@ -38,6 +38,10 @@ class JWT {
       });
     });
   }
+
+  public static decode(token: string) {
+    return jwt.decode(token);
+  }
 }
 
 export default JWT;
