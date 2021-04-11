@@ -2,6 +2,7 @@ import User from '../../../entities/User.entity';
 import UserProfile from '../../../entities/UserProfile.entity';
 import { FastifyPluginCallback, RouteShorthandOptions } from 'fastify';
 import { getRepository } from 'typeorm';
+import bcrypt from 'bcrypt';
 
 interface ILoginBody {
   id: string;
@@ -31,7 +32,11 @@ const loginRoute: FastifyPluginCallback = async (fastify, opts) => {
         return res.status(400).send({ message: "User doesn't exists" });
       }
 
-      // TODO: Compare encrypted password and requested password
+      // Compare encrypted password and requested password
+      const isPasswordMatch = await bcrypt.compare(password, user.password);
+      if (!isPasswordMatch) {
+        return res.status(401).send({ message: 'Password incorrect' });
+      }
 
       const userProfile = await userProfileRepository.findOne({
         fk_user_id: user.id,

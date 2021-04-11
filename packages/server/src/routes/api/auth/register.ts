@@ -2,6 +2,7 @@ import User from '../../../entities/User.entity';
 import UserProfile from '../../../entities/UserProfile.entity';
 import { FastifyPluginCallback, RouteShorthandOptions } from 'fastify';
 import { getRepository } from 'typeorm';
+import bcrypt from 'bcrypt';
 
 interface IRegisterBody {
   id: string;
@@ -42,12 +43,14 @@ const registerRoute: FastifyPluginCallback = async (fastify, opts) => {
           return res.status(400).send({ message: 'Tag user already exists' });
         }
 
-        // TODO: Encrypt password with bcrypt Library
+        // Encrypt password with bcrypt Library
+        const salt = await bcrypt.genSalt(10);
+        const encryptedPassword = await bcrypt.hash(password, salt);
 
         const user = new User();
         user.user_id = id;
         user.email = email;
-        user.password = password;
+        user.password = encryptedPassword;
         await userRepository.save(user);
 
         const userProfile = new UserProfile();
