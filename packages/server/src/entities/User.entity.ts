@@ -57,7 +57,7 @@ class User extends BaseEntity {
       secret,
       {
         subject: 'refresh_token',
-        expiresIn: '1h',
+        expiresIn: '30d',
       }
     );
 
@@ -76,6 +76,27 @@ class User extends BaseEntity {
     );
 
     return { accessToken, refreshToken } as const;
+  }
+
+  async refreshUserToken() {
+    const userProfile = await getRepository(UserProfile).findOne({
+      fk_user_id: this.id,
+    });
+    const secret = JWT.secret();
+
+    const accessToken = await JWT.sign(
+      {
+        id: this.id,
+        user_id: this.id,
+        user_email: this.email,
+        tag: userProfile!.tag,
+      },
+      secret,
+      {
+        subject: 'access_token',
+        expiresIn: '1h',
+      }
+    );
   }
 }
 
