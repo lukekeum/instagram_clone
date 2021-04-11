@@ -21,12 +21,9 @@ const loginRoute: FastifyPluginCallback = async (fastify, opts) => {
 
       const { id, password } = req.body;
 
-      fastify.log.debug(2);
       const user = await userRepository.findOne({
         user_id: req.body.id,
       });
-
-      fastify.log.debug(1);
 
       if (!user) {
         return res.status(400).send({ message: "User doesn't exists" });
