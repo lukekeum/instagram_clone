@@ -39,10 +39,19 @@ const loginRoute: FastifyPluginCallback = async (fastify, opts) => {
         fk_user_id: user.id,
       });
       const token = await user.generateToken();
+      const { accessToken, refreshToken } = token;
+      if (!accessToken || !refreshToken) {
+        return res.status(500).send({ message: 'Something went wrong' });
+      }
 
       const { tag, short_bio } = userProfile!;
 
-      // TODO: Pass refresh_token to user cookie
+      // Pass refresh_token to user cookie
+      res.setCookie('token', refreshToken, {
+        path: '/',
+        httpOnly: true,
+        secure: true,
+      });
 
       const data = {
         id: user.id,

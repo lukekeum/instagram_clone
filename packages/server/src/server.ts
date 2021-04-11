@@ -1,6 +1,7 @@
 import fastify, { FastifyInstance } from 'fastify';
 
 import fastifyCompress from 'fastify-compress';
+import fastifyCookie from 'fastify-cookie';
 import rootRoute from './routes';
 
 class Server {
@@ -9,6 +10,7 @@ class Server {
     this._server = fastify({ logger: true });
 
     this._server.register(fastifyCompress);
+    this._server.register(fastifyCookie);
 
     this._server.register(rootRoute, { prefix: '/' });
   }
