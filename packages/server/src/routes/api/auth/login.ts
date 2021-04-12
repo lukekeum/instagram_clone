@@ -1,9 +1,10 @@
-import User from '../../../entities/User.entity';
-import UserProfile from '../../../entities/UserProfile.entity';
 import { FastifyPluginCallback, RouteShorthandOptions } from 'fastify';
 import { getRepository } from 'typeorm';
 import bcrypt from 'bcrypt';
 import { ILoginBody, loginSchema } from './auth.schema';
+
+import User from '@entity/User.entity';
+import UserProfile from '@entity/UserProfile.entity';
 
 const loginRoute: FastifyPluginCallback = async (fastify, opts) => {
   /**

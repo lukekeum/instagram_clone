@@ -1,9 +1,10 @@
-import User from '../../../entities/User.entity';
-import UserProfile from '../../../entities/UserProfile.entity';
-import { FastifyPluginCallback, RouteShorthandOptions } from 'fastify';
+import { FastifyPluginCallback } from 'fastify';
 import { getRepository } from 'typeorm';
-import bcrypt from 'bcrypt';
 import { IRegisterBody, registerSchema } from './auth.schema';
+import bcrypt from 'bcrypt';
+
+import User from '@entity/User.entity';
+import UserProfile from '@entity/UserProfile.entity';
 
 const registerRoute: FastifyPluginCallback = async (fastify, opts) => {
   /**

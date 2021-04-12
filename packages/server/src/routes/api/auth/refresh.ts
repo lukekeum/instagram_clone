@@ -1,13 +1,9 @@
-import AuthToken from '../../../entities/AuthToken.entity';
 import { FastifyPluginCallback } from 'fastify';
 import { getRepository } from 'typeorm';
-import User from '../../../entities/User.entity';
-import JWT from '../../../lib/jwt';
 
-interface IUserTokenCookie {
-  id: string;
-  token: string;
-}
+import AuthToken from '@entity/AuthToken.entity';
+import User from '@entity/User.entity';
+import JWT from '@lib/jwt';
 
 const refreshRoute: FastifyPluginCallback = async (fastify, opts) => {
   /**
