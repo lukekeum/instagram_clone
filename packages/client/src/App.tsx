@@ -3,6 +3,7 @@ import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { useAuthState } from './atom/auth';
 import Home from './pages/Home';
 import Login from './pages/Login';
+import Register from './pages/Register';
 
 function App() {
   const [{ authenticated: auth }] = useAuthState();
@@ -10,6 +11,7 @@ function App() {
     <BrowserRouter>
       <Switch>
         <ProtectedRoute auth={auth} path="/" exact component={Home} />
+        <Route path="/register" component={Register} />
         <Route path="/login" component={Login} />
       </Switch>
     </BrowserRouter>

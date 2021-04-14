@@ -1,28 +1,32 @@
 import React, { useCallback, useContext, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { LoginContext } from '.';
-import useLogin from '../../hooks/useLogin';
+import { RegisterContext } from '.';
+import useRegister from '../../hooks/useRegister';
+import client from '../../lib/client';
 
 interface IFormProps {
   id?: string;
   children: React.ReactNode;
   value: {
     id: string;
+    email: string;
     password: string;
+    tag: string;
   };
 }
 
 function Form({ children, id, value }: IFormProps) {
-  const { login, loading, message } = useLogin();
-  const { setError } = useContext(LoginContext);
+  const { register, loading, message } = useRegister();
+  const { setError } = useContext(RegisterContext);
   const history = useHistory();
 
   const onSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      login(value);
+
+      register(value);
     },
-    [value, login],
+    [value, register],
   );
 
   useEffect(() => {
@@ -32,7 +36,7 @@ function Form({ children, id, value }: IFormProps) {
       let errMessage = '';
       switch (message.status) {
         case 400:
-          errMessage = '아이디나 패스워드가 잘못되었습니다';
+          errMessage = '이미 존재하는 유저입니다';
           break;
         case 500:
           errMessage = 'Something went wrong';
