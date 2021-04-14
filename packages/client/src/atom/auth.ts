@@ -3,9 +3,10 @@ import { atom, useRecoilState } from 'recoil';
 export interface IAuthAtom {
   authenticated: boolean;
   profile?: {
+    uuid: string;
     user_id: string;
     user_tag: string;
-    display_name: string;
+    short_bio: string | null;
   };
 }
 
