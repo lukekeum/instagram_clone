@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
 class Client {
   private _axios: AxiosInstance;
@@ -10,7 +10,7 @@ class Client {
     });
   }
 
-  get(path: string, payload: AxiosRequestConfig = {}) {
+  get(path: string, payload: Object = {}): Promise<AxiosResponse> {
     return new Promise((res, rej) => {
       this._axios
         .get(path, payload)
@@ -19,7 +19,7 @@ class Client {
     });
   }
 
-  post(path: string, payload: AxiosRequestConfig = {}) {
+  post(path: string, payload: Object = {}): Promise<AxiosResponse> {
     return new Promise((res, rej) => {
       this._axios
         .post(path, payload)
@@ -28,7 +28,7 @@ class Client {
     });
   }
 
-  patch(path: string, payload: AxiosRequestConfig = {}) {
+  patch(path: string, payload: Object = {}): Promise<AxiosResponse> {
     return new Promise((res, rej) => {
       this._axios
         .patch(path, payload)
@@ -37,7 +37,7 @@ class Client {
     });
   }
 
-  put(path: string, payload: AxiosRequestConfig = {}) {
+  put(path: string, payload: Object = {}): Promise<AxiosResponse> {
     return new Promise((res, rej) => {
       this._axios
         .put(path, payload)
