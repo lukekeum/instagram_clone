@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useAuthState } from '../atom/auth';
 import client from '../lib/client';
 
@@ -26,44 +26,47 @@ const useLogin = () => {
   const [message, setMessage] = useState<ILoginFunctionResponse>({});
   const [loading, setLoading] = useState(false);
 
-  const login = async ({ id, password }: { id: string; password: string }) => {
-    try {
-      setLoading(true);
+  const login = useCallback(
+    async ({ id, password }: { id: string; password: string }) => {
+      try {
+        setLoading(true);
 
-      const response = await client.post('/api/auth/login', {
-        id,
-        password,
-      });
+        const response = await client.post('/api/auth/login', {
+          id,
+          password,
+        });
 
-      setLoading(false);
+        setLoading(false);
 
-      if (response.status !== 201) {
-        setMessage({ status: response.status, message: 'Unknown Error' });
-        return false;
+        if (response.status !== 201) {
+          setMessage({ status: response.status, message: 'Unknown Error' });
+          return false;
+        }
+
+        const data = response.data as ILoginData;
+
+        setAuthState({
+          authenticated: true,
+          profile: {
+            uuid: data.data.id,
+            user_id: data.data.user_id,
+            user_tag: data.data.profile.tag,
+            short_bio: data.data.profile.short_bio,
+          },
+        });
+
+        client.authHeaderSetup(data.token);
+
+        setMessage({ status: 201, message: '로그인 성공' });
+      } catch (err) {
+        setMessage({
+          status: err.response.status,
+          message: err.response.data.message,
+        });
       }
-
-      const data = response.data as ILoginData;
-
-      setAuthState({
-        authenticated: true,
-        profile: {
-          uuid: data.data.id,
-          user_id: data.data.user_id,
-          user_tag: data.data.profile.tag,
-          short_bio: data.data.profile.short_bio,
-        },
-      });
-
-      client.authHeaderSetup(data.token);
-
-      setMessage({ status: 201, message: '로그인 성공' });
-    } catch (err) {
-      setMessage({
-        status: err.response.status,
-        message: err.response.data.message,
-      });
-    }
-  };
+    },
+    [setAuthState],
+  );
 
   return { login, message, loading };
 };
