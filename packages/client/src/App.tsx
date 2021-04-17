@@ -1,12 +1,23 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { useAuthState } from './atom/auth';
+import useCheckLogin from './hooks/useCheckLogin';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 
 function App() {
-  const [{ authenticated: auth }] = useAuthState();
+  const [authentication] = useAuthState();
+  const { checkLogin } = useCheckLogin();
+
+  const auth = useMemo(() => authentication.authenticated, [authentication]);
+
+  useEffect(() => {
+    checkLogin();
+    return () => {
+      console.log('clean up');
+    };
+  }, [checkLogin]);
   return (
     <BrowserRouter>
       <Switch>
