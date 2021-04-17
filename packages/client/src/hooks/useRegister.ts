@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
-import { useAuthState } from '../atom/auth';
 import client from '../lib/client';
+import useLogin from './useLogin';
 
-interface IRegisterParams {
+export interface IRegisterParams {
   id: string;
   email: string;
   password: string;
@@ -14,24 +14,10 @@ interface IRegisterFunctionResponse {
   message?: string;
 }
 
-interface IRegisterData {
-  message: string;
-  data: {
-    id: string;
-    user_id: string;
-    email: string;
-    profile: {
-      tag: string;
-      short_bio: string | null;
-    };
-  };
-  token: string;
-}
-
 const useRegister = () => {
-  const [, setAuthState] = useAuthState();
   const [message, setMessage] = useState<IRegisterFunctionResponse>({});
   const [loading, setLoading] = useState(false);
+  const { login } = useLogin();
 
   const register = useCallback(
     async ({ id, email, password, tag }: IRegisterParams) => {
@@ -54,17 +40,7 @@ const useRegister = () => {
           });
         }
 
-        const data = response.data as IRegisterData;
-
-        setAuthState({
-          authenticated: true,
-          profile: {
-            uuid: data.data.id,
-            user_id: data.data.user_id,
-            user_tag: data.data.profile.tag,
-            short_bio: data.data.profile.short_bio,
-          },
-        });
+        login({ id, password });
 
         setMessage({
           status: 201,
@@ -77,7 +53,7 @@ const useRegister = () => {
         });
       }
     },
-    [setAuthState],
+    [login],
   );
 
   return { register, message, loading };

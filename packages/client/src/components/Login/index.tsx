@@ -1,24 +1,18 @@
-import React, { createContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 import Logo from '../../assets/Logo';
 import ToRegister from './ToRegister';
 import Button from './Button';
-import Form from './Form';
 import useInput from '../../hooks/useInput';
 import { InputStyle } from './Input';
-
-interface ILoginContext {
-  setError?: React.Dispatch<React.SetStateAction<string>>;
-  error?: string;
-}
-
-export const LoginContext = createContext<ILoginContext>({});
+import useLoginForm from '../../hooks/useLoginForm';
 
 function LoginComponent() {
   const [id, onChangeID] = useInput();
   const [password, onChangePassword] = useInput();
   const [disable, setDisable] = useState(true);
   const [error, setError] = useState('');
+  const { onSubmit } = useLoginForm(setError);
 
   useEffect(() => {
     if (!id || !password) {
@@ -29,32 +23,30 @@ function LoginComponent() {
   }, [id, password]);
 
   return (
-    <LoginContext.Provider value={{ error, setError }}>
-      <div css={ComponentStyle}>
-        <div id="login__wrapper">
-          <Logo className="login__logo" />
-          <ToRegister />
-          <Form id="login__form" value={{ id, password }}>
-            <input
-              css={InputStyle(error)}
-              type="text"
-              value={id}
-              placeholder="아이디"
-              onChange={onChangeID}
-            />
-            <input
-              css={InputStyle(error)}
-              type="password"
-              value={password}
-              placeholder="비밀번호"
-              onChange={onChangePassword}
-            />
-            <span id="login__error_span">{error}</span>
-            <Button disabled={disable} />
-          </Form>
-        </div>
+    <div css={ComponentStyle}>
+      <div id="login__wrapper">
+        <Logo className="login__logo" />
+        <ToRegister />
+        <form id="login__form" onSubmit={onSubmit({ id, password })}>
+          <input
+            css={InputStyle(error)}
+            type="text"
+            value={id}
+            placeholder="아이디"
+            onChange={onChangeID}
+          />
+          <input
+            css={InputStyle(error)}
+            type="password"
+            value={password}
+            placeholder="비밀번호"
+            onChange={onChangePassword}
+          />
+          <span id="login__error_span">{error}</span>
+          <Button disabled={disable} />
+        </form>
       </div>
-    </LoginContext.Provider>
+    </div>
   );
 }
 

@@ -2,6 +2,11 @@ import { useCallback, useState } from 'react';
 import { useAuthState } from '../atom/auth';
 import client from '../lib/client';
 
+export interface ILoginParams {
+  id: string;
+  password: string;
+}
+
 interface ILoginFunctionResponse {
   status?: number;
   message?: string;
@@ -27,7 +32,7 @@ const useLogin = () => {
   const [loading, setLoading] = useState(false);
 
   const login = useCallback(
-    async ({ id, password }: { id: string; password: string }) => {
+    async ({ id, password }: ILoginParams) => {
       try {
         setLoading(true);
 
