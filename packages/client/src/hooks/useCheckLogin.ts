@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useAuthState } from '../atom/auth';
 import client from '../lib/client';
 
