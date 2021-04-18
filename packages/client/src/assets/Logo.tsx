@@ -1,7 +1,8 @@
 import LogoImage from './instagram.png';
+import { SerializedStyles } from '@emotion/react';
 
-function Logo({ className }: { className: string }) {
-  return <img src={LogoImage} className={className} alt="logo" />;
+function Logo({ ...rest }: { className?: string; css?: SerializedStyles }) {
+  return <img src={LogoImage} {...rest} alt="logo" />;
 }
 
 export default Logo;
