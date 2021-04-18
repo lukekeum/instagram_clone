@@ -49,6 +49,10 @@ class Client {
   authHeaderSetup(access_token: string) {
     this._axios.defaults.headers.common['token'] = access_token;
   }
+
+  get client() {
+    return this._axios;
+  }
 }
 
 const client = new Client();
