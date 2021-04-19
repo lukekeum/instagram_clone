@@ -1,11 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { css } from '@emotion/react';
 import useOutsideClickHandler from '../../hooks/useOutsideClick';
+import SearchUser from '../SearchUser';
 
 function Searchbar() {
   const SearchTextEl = useRef<HTMLSpanElement>(null);
   const InputEl = useRef<HTMLInputElement>(null);
   const WrapperEl = useRef<HTMLDivElement>(null);
+  const searchUserEl = useRef<HTMLDivElement>(null);
   const [clicked, setClicked] = useState<boolean>(false);
   const [searchInput, setSearchInput] = useState('');
 
@@ -20,7 +22,6 @@ function Searchbar() {
 
   const onClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
-      console.log(e);
       if (clicked) return;
       setClicked(true);
     },
@@ -35,16 +36,27 @@ function Searchbar() {
   );
 
   return (
-    <div ref={WrapperEl} css={SearchbarStyle(clicked)} onClick={onClick}>
-      <span ref={SearchTextEl}>검색</span>
-      <form>
-        <input
-          ref={InputEl}
-          value={searchInput}
-          placeholder="검색"
-          onChange={onChangeEvent}
-        />
-      </form>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+      ref={WrapperEl}
+    >
+      <div css={SearchbarStyle(clicked)} onClick={onClick}>
+        <span ref={SearchTextEl}>검색</span>
+        <form>
+          <input
+            ref={InputEl}
+            value={searchInput}
+            placeholder="검색"
+            onChange={onChangeEvent}
+          />
+        </form>
+      </div>
+      {clicked && <SearchUser ref={searchUserEl} />}
     </div>
   );
 }
