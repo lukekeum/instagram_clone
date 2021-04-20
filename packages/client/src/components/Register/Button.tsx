@@ -8,7 +8,7 @@ interface IButtonProps {
 function Button({ disabled }: IButtonProps) {
   return (
     <button css={ButtonStyle} disabled={disabled} type="submit">
-      로그인
+      회원가입
     </button>
   );
 }
