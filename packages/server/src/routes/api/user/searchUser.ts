@@ -1,30 +1,61 @@
 import User from '@src/entities/User.entity';
-import { FastifyPluginCallback } from 'fastify';
+import UserProfile from '@src/entities/UserProfile.entity';
+import { FastifyPluginCallback, RouteShorthandOptions } from 'fastify';
 import { getRepository, Like } from 'typeorm';
 
+interface IUserData {
+  id: string;
+  user_id: string;
+  email: string;
+  profiles: {
+    tag: string;
+    short_bio: string | null;
+  };
+}
+
 const searchUserRoute: FastifyPluginCallback = async (fastify, opts) => {
-  fastify.get<{ Body: { input: string } }>(
+  fastify.get<{ Querystring: { search: string } }>(
     '/',
     searchUserSchema,
     async (req, res) => {
       try {
-        const { input } = req.body;
-        if (!input) return res.status(400).send({ message: 'Unknown input' });
+        const { search } = req.query;
+        if (!search) return res.status(400).send({ message: 'Unknown input' });
 
         const userRepository = await getRepository(User);
 
         const SearchUser = await userRepository.find({
-          where: {
-            email: Like(input),
-            user_id: Like(input),
-          },
+          where: [
+            { user_id: Like(`${search}%`) },
+            { email: Like(`${search}%`) },
+          ],
         });
 
         if (SearchUser.length < 1) {
           res.status(404).send({ message: 'No user found' });
         }
 
-        res.status(200).send({ data: SearchUser });
+        const data: IUserData[] = [];
+
+        for (const user of SearchUser) {
+          const userProfile = await getRepository(UserProfile).findOne({
+            fk_user_id: user.id,
+          });
+
+          const userdata: IUserData = {
+            id: user.id,
+            user_id: user.user_id,
+            email: user.email,
+            profiles: {
+              tag: userProfile!.tag,
+              short_bio: userProfile!.short_bio,
+            },
+          };
+
+          data.push(userdata);
+        }
+
+        res.status(200).send({ data });
       } catch (err) {
         fastify.log.error(err);
         res.status(500).send({ message: 'Internal Server Error' });
@@ -35,12 +66,8 @@ const searchUserRoute: FastifyPluginCallback = async (fastify, opts) => {
 
 const searchUserSchema = {
   schema: {
-    body: {
-      type: 'object',
-      required: ['input'],
-      properties: {
-        input: { type: 'string' },
-      },
+    querystring: {
+      search: { type: 'string' },
     },
     response: {
       '4xx': {
