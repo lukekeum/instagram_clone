@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import client from '../lib/client';
 
 interface IUser {
@@ -22,12 +22,15 @@ const useSearchUser = () => {
   const [error, setError] = useState<any>();
 
   const searchUser = useCallback(async (input: string) => {
+    if (!input) return;
+    setError(null);
+
     try {
       setLoading(true);
-      const response = await client.get('/api/user/search', { input });
+      const response = await client.get(`/api/user/search?search=${input}`);
       setLoading(false);
 
-      if (response.status === 404) {
+      if (response.data.message) {
         return setResult({ found: false });
       }
 
@@ -39,6 +42,10 @@ const useSearchUser = () => {
       setError(err.response.data);
     }
   }, []);
+
+  useEffect(() => {
+    setResult({ found: false });
+  }, [error]);
 
   return { searchUser, result, loading, error } as const;
 };
