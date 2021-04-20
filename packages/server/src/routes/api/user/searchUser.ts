@@ -32,7 +32,7 @@ const searchUserRoute: FastifyPluginCallback = async (fastify, opts) => {
         });
 
         if (SearchUser.length < 1) {
-          res.status(404).send({ message: 'No user found' });
+          res.status(200).send({ message: 'No user found' });
         }
 
         const data: IUserData[] = [];
