@@ -32,15 +32,18 @@ function App() {
   useEffect(() => {}, [history]);
 
   return (
-    <BrowserRouter>
-      <LoadingBar progress={loading * 100} color="#2998ff" />
-      <Switch>
-        <ProtectedRoute auth={auth} path="/" exact component={Home} />
-        <Route path="/register" component={Register} />
-        <Route path="/login" component={Login} />
-      </Switch>
-      <LoadingBar />
-    </BrowserRouter>
+    <>
+      <BrowserRouter>
+        <LoadingBar progress={loading * 100} color="#2998ff" />
+        <Switch>
+          <ProtectedRoute auth={auth} path="/" exact component={Home} />
+          <Route path="/register" component={Register} />
+          <Route path="/login" component={Login} />
+        </Switch>
+        <LoadingBar />
+      </BrowserRouter>
+      <div id="react__portal" />
+    </>
   );
 }
 
