@@ -1,24 +1,32 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { css } from '@emotion/react';
 import useOutsideClickHandler from '../../hooks/useOutsideClick';
+import useSearchUser from '../../hooks/useSearchUser';
 import SearchUser from '../SearchUser';
+import _ from 'lodash';
 
 function Searchbar() {
   const SearchTextEl = useRef<HTMLSpanElement>(null);
   const InputEl = useRef<HTMLInputElement>(null);
   const WrapperEl = useRef<HTMLDivElement>(null);
-  const searchUserEl = useRef<HTMLDivElement>(null);
   const [clicked, setClicked] = useState<boolean>(false);
   const [searchInput, setSearchInput] = useState('');
+  const { searchUser, result } = useSearchUser();
+  const delayedSearchUser = useRef(
+    _.debounce((input) => searchUser(input), 500),
+  ).current;
 
   useOutsideClickHandler(WrapperEl, () => {
     setClicked(false);
-    setSearchInput('');
   });
 
   useEffect(() => {
     InputEl?.current?.focus();
   }, [clicked]);
+
+  useEffect(() => {
+    console.log(result);
+  }, [result]);
 
   const onClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -31,8 +39,11 @@ function Searchbar() {
   const onChangeEvent = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setSearchInput(e.target.value);
+      delayedSearchUser(e.target.value);
+      if (searchInput.trim() === '') {
+      }
     },
-    [setSearchInput],
+    [setSearchInput, delayedSearchUser, searchInput],
   );
 
   return (
@@ -46,17 +57,15 @@ function Searchbar() {
       ref={WrapperEl}
     >
       <div css={SearchbarStyle(clicked)} onClick={onClick}>
-        <span ref={SearchTextEl}>검색</span>
-        <form>
-          <input
-            ref={InputEl}
-            value={searchInput}
-            placeholder="검색"
-            onChange={onChangeEvent}
-          />
-        </form>
+        <span ref={SearchTextEl}>{searchInput ? searchInput : '검색'}</span>
+        <input
+          ref={InputEl}
+          value={searchInput}
+          placeholder="검색"
+          onChange={onChangeEvent}
+        />
       </div>
-      {clicked && <SearchUser ref={searchUserEl} />}
+      {clicked && <SearchUser />}
     </div>
   );
 }
@@ -71,19 +80,12 @@ const SearchbarStyle = (clicked: boolean) => css`
   border-radius: 3px;
   color: #8e8e8e;
   font-size: 0.875rem;
-  cursor: pointer;
+  cursor: text;
   height: 26px;
   & > span {
     ${clicked && 'display: none;'}
   }
-  & > form {
-    display: ${!clicked ? 'none' : 'flex'};
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-  }
-  & > form > input {
+  & > input {
     ${!clicked && 'display: none;'}
     padding: 0;
     background: #fafafa;

@@ -1,14 +1,14 @@
-import React, { forwardRef } from 'react';
+import React from 'react';
 import { css } from '@emotion/react';
 
-const SearchUser = forwardRef<HTMLDivElement>((props, ref) => {
+const SearchUser = () => {
   return (
-    <div ref={ref} css={SearchUserStyle}>
+    <div css={SearchUserStyle}>
       <div id="searchuser__container"></div>
       <div id="searchuser__rectengle"></div>
     </div>
   );
-});
+};
 
 const SearchUserStyle = css`
   position: absolute;
