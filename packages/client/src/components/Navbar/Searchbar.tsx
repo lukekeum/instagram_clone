@@ -4,6 +4,7 @@ import useOutsideClickHandler from '../../hooks/useOutsideClick';
 import useSearchUser from '../../hooks/useSearchUser';
 import SearchUser from '../SearchUser';
 import _ from 'lodash';
+import useSearchUserAtom from '../../atom/searchUser';
 
 function Searchbar() {
   const SearchTextEl = useRef<HTMLSpanElement>(null);
@@ -11,7 +12,8 @@ function Searchbar() {
   const WrapperEl = useRef<HTMLDivElement>(null);
   const [clicked, setClicked] = useState<boolean>(false);
   const [searchInput, setSearchInput] = useState('');
-  const { searchUser, result } = useSearchUser();
+  const [, setResult] = useSearchUserAtom();
+  const { searchUser } = useSearchUser();
   const delayedSearchUser = useRef(
     _.debounce((input) => searchUser(input), 500),
   ).current;
@@ -24,26 +26,24 @@ function Searchbar() {
     InputEl?.current?.focus();
   }, [clicked]);
 
-  useEffect(() => {
-    console.log(result);
-  }, [result]);
-
-  const onClick = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      if (clicked) return;
-      setClicked(true);
-    },
-    [setClicked, clicked],
-  );
+  const onClick = useCallback(() => {
+    if (clicked) return;
+    setClicked(true);
+  }, [setClicked, clicked]);
 
   const onChangeEvent = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setSearchInput(e.target.value);
-      delayedSearchUser(e.target.value);
-      if (searchInput.trim() === '') {
+      const value = e.target.value;
+      if (value.trim() === '' && value.length > 0)
+        return setResult({ loading: false });
+      if (value.length === 0) {
+        setSearchInput('');
+        return setResult({ loading: false });
       }
+      setSearchInput(e.target.value);
+      delayedSearchUser(value);
     },
-    [setSearchInput, delayedSearchUser, searchInput],
+    [setSearchInput, delayedSearchUser, setResult],
   );
 
   return (

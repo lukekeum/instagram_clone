@@ -1,10 +1,16 @@
 import React from 'react';
 import { css } from '@emotion/react';
+import Content from './Content';
+import useSearchUserAtom from '../../atom/searchUser';
 
 const SearchUser = () => {
+  const [result] = useSearchUserAtom();
+
   return (
     <div css={SearchUserStyle}>
-      <div id="searchuser__container"></div>
+      <div id="searchuser__container">
+        <Content result={result} />
+      </div>
       <div id="searchuser__rectengle"></div>
     </div>
   );
