@@ -1,7 +1,15 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { css } from '@emotion/react';
 import Icon from '../../assets/icons';
 import { Link, useLocation } from 'react-router-dom';
+import MeDropbox from '../MeDropbox';
+import useOutsideClickHandler from '../../hooks/useOutsideClick';
 
 enum EActivity {
   HOME,
@@ -14,11 +22,13 @@ enum EActivity {
 function Activity() {
   const location = useLocation();
   const currentPath = useMemo(() => location.pathname, [location]);
+  const meDropboxEl = useRef<HTMLSpanElement>(null);
+  const [meDropboxOpened, setMeDropboxOpened] = useState<boolean>(false);
   const [currentLocation, setCurrentLocation] = useState<EActivity>(
     EActivity.HOME,
   );
 
-  useEffect(() => {
+  const setLocation = useCallback((currentPath: string) => {
     switch (currentPath) {
       case '/':
         setCurrentLocation(EActivity.HOME);
@@ -36,7 +46,24 @@ function Activity() {
         setCurrentLocation(EActivity.NONE);
         break;
     }
-  }, [currentPath, currentLocation]);
+  }, []);
+
+  useEffect(() => {
+    setLocation(currentPath);
+  }, [setLocation, currentPath, setCurrentLocation]);
+
+  useOutsideClickHandler(meDropboxEl, () => {
+    setMeDropboxOpened(false);
+    setLocation(currentPath);
+  });
+
+  const onMeIconClick = useCallback(() => {
+    setMeDropboxOpened((prev) => !prev);
+    if (meDropboxOpened) {
+      return setLocation(currentPath);
+    }
+    return setCurrentLocation(EActivity.NONE);
+  }, [meDropboxOpened, currentPath, setLocation]);
 
   return (
     <div css={ActivityStyle}>
@@ -74,8 +101,9 @@ function Activity() {
           />
         </Link>
       </span>
-      <span id="me_icon">
+      <span id="me_icon" ref={meDropboxEl} onClick={onMeIconClick}>
         <Icon name="me" />
+        <MeDropbox opened={meDropboxOpened} />
       </span>
     </div>
   );
@@ -85,6 +113,9 @@ const ActivityStyle = css`
   display: flex;
   align-items: center;
   & > span {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
     margin-left: 1.375rem;
     cursor: pointer;
   }
