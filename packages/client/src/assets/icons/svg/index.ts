@@ -7,6 +7,8 @@ import { ReactComponent as feedActive } from './feed-active.svg';
 import { ReactComponent as direct } from './direct.svg';
 import { ReactComponent as directActive } from './direct-active.svg';
 import { ReactComponent as me } from './me.svg';
+import { ReactComponent as profile } from './profile.svg';
+import { ReactComponent as settings } from './settings.svg';
 
 export {
   home,
@@ -18,4 +20,6 @@ export {
   direct,
   directActive,
   me,
+  profile,
+  settings,
 };
